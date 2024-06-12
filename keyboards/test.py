@@ -1,17 +1,11 @@
-import os
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
-from aiogram.types import KeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+kb1 = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Да')],
+    [KeyboardButton(text='Нет')]
+], resize_keyboard=True, one_time_keyboard=True)
 
-from utils.questions import questions_base
-
-
-# Генератор клавиатуры
-async def question(number):
-    builder = ReplyKeyboardBuilder()
-    answers = questions_base[number - 1]  # Учитывая, что номер вопроса начинается с 1
-    for i in answers['answers']:
-        builder.add(KeyboardButton(text=i))
-    return builder.adjust(1).as_markup(resize_keyboard=True)
-
-
+kb = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Да')],
+    [KeyboardButton(text='Нет')]
+], resize_keyboard=True, one_time_keyboard=False)

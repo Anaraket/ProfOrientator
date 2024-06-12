@@ -3,6 +3,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 # Состояния бота
 class QuestionsState(StatesGroup):
+    wait = State()
     first = State()
     second = State()
     third = State()
@@ -27,3 +28,9 @@ class QuestionsState(StatesGroup):
     twenty_second = State()
     twenty_third = State()
     twenty_fourth = State()
+    twenty_fifth = State()
+    twenty_sixth = State()
+    twenty_seventh = State()
+    twenty_eighth = State()
+    twenty_ninth = State()
+    thirtieth = State()
