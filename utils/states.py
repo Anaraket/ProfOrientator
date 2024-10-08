@@ -4,6 +4,8 @@ from aiogram.fsm.state import StatesGroup, State
 # Состояния бота
 class QuestionsState(StatesGroup):
     wait = State()
+    fio = State()
+    institution = State()
     first = State()
     second = State()
     third = State()

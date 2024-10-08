@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 
@@ -11,6 +12,8 @@ class UserDatabase:
         query = '''CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY,
                     username TEXT,
+                    full_name TEXT,
+                    institution TEXT,
                     result TEXT
                 )'''
         self.cursor.execute(query)
@@ -28,8 +31,28 @@ class UserDatabase:
     def add_result(self, user_id, result):
         query = "UPDATE users SET result = ? WHERE id = ?"
         try:
-            self.cursor.execute(query, (result, user_id))
+            # Преобразовываем словарь в JSON строку
+            result_json = json.dumps(result)
+            self.cursor.execute(query, (result_json, user_id))
             self.connection.commit()
             print("Результат пользователя успешно добавлен")
-        except sqlite3.Error as Error:
-            print('Ошибка при добавлении результата пользователя:', Error)
+        except sqlite3.Error as error:
+            print('Ошибка при добавлении результата пользователя:', error)
+
+    def add_full_name(self, user_id, full_name):
+        query = "UPDATE users SET full_name = ? WHERE id = ?"
+        try:
+            self.cursor.execute(query, (full_name, user_id))
+            self.connection.commit()
+            print("Полное имя пользователя успешно добавлено")
+        except sqlite3.Error as error:
+            print('Ошибка при добавлении полного имени пользователя:', error)
+
+    def add_institution(self, user_id, institution):
+        query = "UPDATE users SET institution = ? WHERE id = ?"
+        try:
+            self.cursor.execute(query, (institution, user_id))
+            self.connection.commit()
+            print("Учебное заведение пользователя успешно добавлено")
+        except sqlite3.Error as error:
+            print('Ошибка при добавлении учебного заведения пользователя:', error)

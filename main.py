@@ -1,7 +1,7 @@
 import asyncio
 import os
 
-import logging
+# import logging
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 from handlers.test import router as router_test
@@ -16,7 +16,7 @@ admin_id = os.getenv('ADMIN_ID')
 bot = Bot(token=token, parse_mode='HTML')
 dp = Dispatcher()
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 
 @dp.startup()

@@ -23,12 +23,39 @@ async def start_command(message: Message, state: FSMContext):
     await state.set_state(QuestionsState.wait)
 
 
-# Хэндлер для начала самого теста (подтверждение от пользователя)
+# Хэндлер для ввода ФИО
 @router.message(F.text.lower().in_(['да', 'хочу', 'желаю']), QuestionsState.wait)
 async def positive_answer(message: Message, state: FSMContext):
+    await message.answer(text="Введите ФИО (в полном виде):")
+    await state.set_state(QuestionsState.fio)
     db = UserDatabase(os.getenv('DATABASE_NAME'))
     # Добавление пользователя
     db.add_user(message.from_user.id, message.from_user.username)
+
+
+# Переход в состояние ввода ФИО. Реагирует только на корректно введённое ФИО
+@router.message(QuestionsState.fio, lambda message: message.text == message.text.isalpha() or ' ' in message.text)
+async def correct_fio(message: Message, state: FSMContext):
+    db = UserDatabase(os.getenv('DATABASE_NAME'))
+    # Добавление полного имени пользователя
+    db.add_full_name(message.from_user.id, message.text)
+    await message.answer("Теперь введите Ваше учебное заведение:")
+    await state.set_state(QuestionsState.institution)
+
+
+# Хэндлер на неправильно введённое ФИО
+@router.message(QuestionsState.fio)
+async def incorrect_fio(message: Message):
+    await message.answer('Введите ФИО (Иванов Иван Иванович - пример)')
+
+
+# Переход в состояние ввода уч. заведения. Реагирует только на корректно введённое ФИО
+@router.message(QuestionsState.institution)
+async def institution(message: Message, state: FSMContext):
+    db = UserDatabase(os.getenv('DATABASE_NAME'))
+    # Добавление учебного заведения пользователя
+    db.add_institution(message.from_user.id, message.text)
+    await message.answer(text="Замечательно, приступим к тесту 😊")
     await message.answer(
         text=f'<b><u>1-й вопрос❓:</u></b>\n\n<b>{send_questions(number=1)}</b>',
         reply_markup=kb)
@@ -458,7 +485,16 @@ async def thirtieth(message: Message, state: FSMContext):
         art += 1
     await state.update_data(art=art)
     data = await state.get_data()
-    await message.answer(text=result(data))
+
+    # Получаем результат и дополнительный текст
+    final_result, additional_text = result(data)
+
+    # Отправляем основной результат
+    await message.answer(text=final_result)
+
+    # Отправляем дополнительное сообщение
+    await message.answer(text=additional_text)
+
     db = UserDatabase(os.getenv('DATABASE_NAME'))
     # Добавление результата пользователя
     db.add_result(message.from_user.id, data)
@@ -467,7 +503,7 @@ async def thirtieth(message: Message, state: FSMContext):
 # help
 @router.message(Command(commands=['help']))
 async def start_command(message: Message):
-    await message.answer("""👋 Добро пожаловать в ПрофОриентатор!
+    await message.answer("""👋 Добро пожаловать в ПрофОриентир!
 
 🔍 <b>Как использовать бота:</b>
 
@@ -491,7 +527,7 @@ async def start_command(message: Message):
 ❓ <b>Поддержка</b>:
 Если у вас возникли вопросы или нужна помощь, обратитесь к нам в телеграмм за поддержкой: https://t.me/Championnsss1
 
-🚀 Начните свой путь к успешной карьере с ПрофОриентатор!""")
+🚀 Начните свой путь к успешной карьере с ПрофОриентир!""")
 
 
 # hz
