@@ -17,7 +17,7 @@ def result(scores):
     max_score = sorted_scores[0][1]
     max_categories = [category for category, score in sorted_scores if score == max_score]
     additional_text = (f"Кейсы по {', '.join([description[cat].split('— ')[1].split(':')[0] for cat in max_categories])}"
-                       f" мы скинем через 4 дня ❤️🔥</b>")
+                       f" мы скинем через 4 дня ❤️🔥")
 
     for i, (category, score) in enumerate(sorted_scores):
         if score == max_score and i == 0:
